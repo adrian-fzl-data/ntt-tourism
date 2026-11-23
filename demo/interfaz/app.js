@@ -827,6 +827,8 @@
     if (E.zona !== E.zonaPanelAnterior) $('#lateral').scrollTop = 0; // otra zona: el lateral empieza arriba
     E.zonaPanelAnterior = E.zona;
     renderMapa();
+    // Con la ficha flotando sobre el mapa (pantallas anchas), la zona se acerca para que no quede tapada
+    if (window.matchMedia('(min-width: 1061px)').matches) encuadrar('zona', id);
     await renderPanel();
     if (opts.foco !== false) { const h = $('#pz-titulo'); if (h) h.focus(); }
     else if (opts.mostrar !== false && estrecho()) {

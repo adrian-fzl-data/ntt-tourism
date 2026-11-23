@@ -169,7 +169,7 @@ window.MapaAsturias = (function () {
     const zoomInicial = () => map.getBoundsZoom(limites, false, L.point(16, 16));
     map.setView(limites.getCenter(), zoomInicial(), { animate: false });
     map.setMinZoom(map.getZoom());
-    map.setMaxBounds(limites.pad(0.08));
+    map.setMaxBounds(limites.pad(window.matchMedia && matchMedia("(min-width: 1061px)").matches ? 0.3 : 0.08)); // más margen con la ficha flotante
     // Si el contenedor cambia de tamaño (carga de fuentes, giro de pantalla…) se recalcula el encuadre;
     // mientras el usuario no haya movido el mapa, se vuelve a ajustar Asturias entera
     let sinTocar = true;
@@ -454,8 +454,12 @@ window.MapaAsturias = (function () {
         // Una zona siempre se encuadra con zoom suficiente para ver sus concejos
         const z = Math.max(map.getBoundsZoom(b, false, L.point(60, 60)), ZOOM_CONCEJOS);
         const zoom = Math.min(z, opciones.maxZoom);
-        if (movimientoReducido()) map.setView(b.getCenter(), zoom);
-        else map.flyTo(b.getCenter(), zoom, { duration: 0.6 });
+        // Con la ficha flotando a la derecha (pantallas anchas), la zona se centra en el espacio que queda libre
+        const flota = window.matchMedia && matchMedia('(min-width: 1061px)').matches;
+        const reserva = flota ? Math.min(384, contenedor.clientWidth * 0.38) + 16 : 0;
+        const centro = reserva ? map.unproject(map.project(b.getCenter(), zoom).add([reserva / 2, 0]), zoom) : b.getCenter();
+        if (movimientoReducido()) map.setView(centro, zoom);
+        else map.flyTo(centro, zoom, { duration: 0.6 });
       },
       enfocar(tipo, id) {
         const capa = capas[tipo][id];

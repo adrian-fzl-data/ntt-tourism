@@ -830,3 +830,62 @@ dialog::backdrop { background: var(--velo); }
   .subtitulo-pagina { font-size: .92rem; margin-bottom: .75rem; }
   .titulo-pagina { margin-bottom: .25rem; }
 }
+
+/* ==========================================================================
+ * Mapa a pantalla completa con paneles translúcidos (≥ 1061 px)
+ * Título, explicación y fecha (arriba a la izquierda), búsqueda y filtros
+ * (arriba a la derecha), ranking (abajo a la izquierda) y ficha de zona
+ * (a la derecha) flotan sobre el mapa. Los paneles son casi opacos (90 %)
+ * para que el texto se lea sobre cualquier color del mapa; en pantallas
+ * menores, la maquetación apilada de siempre.
+ * ========================================================================== */
+@media (min-width: 1061px) {
+  :root {
+    --panel-fondo: color-mix(in srgb, var(--superficie) 90%, transparent);
+    --panel-borde: color-mix(in srgb, var(--linea-fuerte) 55%, transparent);
+  }
+  #panel-inicio.envoltura { max-width: none; padding: 0; position: relative; }
+  #panel-inicio .mapa { height: calc(100vh - 6.5rem); min-height: 34rem; }
+  #panel-inicio .mapa-marco { border-radius: 0; border: 0; }
+  #panel-inicio .inicio-grid { display: block; }
+  #panel-inicio > .desplegable { margin: 1rem 1rem 0; }
+  #panel-inicio { padding-bottom: 2rem; }
+
+  .flota-info, #panel-inicio .filtros, #panel-inicio .col-lateral > .tarjeta {
+    background: var(--panel-fondo); border: 1px solid var(--panel-borde); border-radius: var(--radio);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  }
+  .flota-info {
+    position: absolute; z-index: 1100; top: 1rem; left: 1rem; width: min(27rem, calc(100% - 2rem));
+    padding: .85rem 1rem 1rem;
+  }
+  .flota-info .titulo-pagina { font-size: 1.25rem; margin-bottom: .2rem; }
+  .flota-info .subtitulo-pagina { font-size: .85rem; line-height: 1.4; margin-bottom: .6rem; }
+  .flota-info .controles {
+    display: block; padding: 0; border: 0; border-radius: 0; background: none;
+  }
+  .flota-info .fecha-mandos { display: flex; margin-top: .5rem; flex-direction: row; flex-wrap: wrap; align-items: center; gap: .5rem; }
+  .flota-info .chip-btn { min-height: 40px; padding: .3rem .8rem; font-size: .9rem; }
+  .flota-info .fecha-grande { font-size: 1.4rem; }
+  .flota-info .btn-cal { flex: 1 1 8rem; }
+
+  #panel-inicio .filtros {
+    position: absolute; z-index: 1100; top: 1rem; right: 1rem; margin: 0; padding: .5rem .6rem;
+    flex-wrap: nowrap; align-items: center; gap: .6rem;
+  }
+  #panel-inicio .buscador { flex: 0 0 15rem; }
+  #panel-inicio .filtros .filtro-et { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+  #panel-inicio .col-lateral { position: absolute; z-index: 1000; left: 1rem; bottom: 3.4rem; top: auto; width: min(23rem, calc(100% - 2rem)); }
+  #panel-inicio .col-lateral #ranking { max-height: 34vh; overflow-y: auto; scrollbar-width: thin; }
+  #panel-inicio .col-lateral.con-panel {
+    left: auto; right: 1rem; top: 5.2rem; bottom: 7.8rem; width: min(24rem, 38%); max-height: none; overflow-y: auto;
+    border-radius: var(--radio); background: none; border: 0; box-shadow: none; scrollbar-width: thin;
+  }
+  #panel-inicio .col-lateral.con-panel #panel-zona { border: 1px solid var(--panel-borde); }
+  .mapa .leaflet-top.leaflet-right { top: auto; bottom: 1.6rem; }
+  .mapa .leaflet-top.leaflet-left { top: auto; bottom: 2.2rem; left: auto; right: 4.8rem; }
+  .flota-info .accesos, .flota-info .paso-fecha { width: 100%; }
+  .flota-info .paso-fecha { display: flex; gap: .5rem; }
+  .flota-info .btn-cal { flex: 1 1 auto; max-width: none; }
+}
