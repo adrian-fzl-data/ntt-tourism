@@ -644,7 +644,11 @@
       $('#nota-mapa').hidden = E.vista !== 'mapa';
       $('#lista-zonas').hidden = E.vista !== 'lista';
       if (E.vista === 'lista') renderLista();
-      else if (E.mapa) E.mapa.redimensionar();
+      else if (E.mapa) {
+        E.mapa.redimensionar();
+        // Copia de escaparate: al volver al mapa con una zona abierta, se encuadra en el hueco libre
+        if (E.zona && window.matchMedia('(min-width: 1061px)').matches) encuadrar('zona', E.zona);
+      }
     }));
     $('#lista-zonas').addEventListener('click', e => {
       const b = e.target.closest('[data-zona]');

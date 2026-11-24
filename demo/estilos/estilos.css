@@ -888,4 +888,15 @@ dialog::backdrop { background: var(--velo); }
   .flota-info .accesos, .flota-info .paso-fecha { width: 100%; }
   .flota-info .paso-fecha { display: flex; gap: .5rem; }
   .flota-info .btn-cal { flex: 1 1 auto; max-width: none; }
+
+  /* Vista de lista: la tabla ocupa el hueco a la derecha del panel de título; la ficha, si está abierta,
+     va en una columna fija al lado (el ranking se oculta porque repite la lista) */
+  #panel-inicio:has(#lista-zonas:not([hidden])) .inicio-grid {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1rem; align-items: start;
+    padding: 5.6rem 1rem 0 calc(min(27rem, 100% - 2rem) + 2rem);
+  }
+  #panel-inicio:has(#lista-zonas:not([hidden])) .col-lateral:not(.con-panel) { display: none; }
+  #panel-inicio:has(#lista-zonas:not([hidden])) .col-lateral.con-panel {
+    position: sticky; top: 1rem; right: auto; bottom: auto; width: min(24rem, 30vw); max-height: calc(100vh - 2rem);
+  }
 }
