@@ -248,7 +248,17 @@ window.MapaAsturias = (function () {
       el.addEventListener('keydown', e => {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); op.alElegir(tipo, id, true); }
       });
-      el.addEventListener('focus', () => { capa.openTooltip(etiquetas[tipo][id].punto); resaltar('hover', tipo, id); });
+      el.addEventListener('focus', () => {
+        // Copia de escaparate: con los paneles flotantes, una zona enfocada con el teclado se trae al hueco libre
+        if (el.matches(':focus-visible') && matchMedia('(min-width: 1061px)').matches) {
+          const caja = contenedor.getBoundingClientRect();
+          const izq = document.querySelector('.flota-info'), der = document.querySelector('.col-lateral.con-panel');
+          const margenIzq = izq ? izq.getBoundingClientRect().right - caja.left + 24 : 24;
+          const margenDer = der ? caja.right - der.getBoundingClientRect().left + 24 : 24;
+          map.panInside(etiquetas[tipo][id].punto, { paddingTopLeft: [margenIzq, 250], paddingBottomRight: [margenDer, 60], animate: !movimientoReducido() });
+        }
+        capa.openTooltip(etiquetas[tipo][id].punto); resaltar('hover', tipo, id);
+      });
       el.addEventListener('blur', () => { capa.closeTooltip(); resaltar('hover', null); });
     }));
 
