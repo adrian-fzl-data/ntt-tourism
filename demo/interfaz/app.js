@@ -755,28 +755,30 @@
    * Columna lateral: ranking y lista
    * ==================================================================== */
   function renderRanking() {
-    const visibles = E.prevDia.filter(p => p.nivel !== 'gris' && coincideTipo(E.zonasPorId[p.zonaId]));
-    const top = visibles.slice().sort((a, b) => b.ratio - a.ratio).slice(0, 5);
-    const enTop = new Set(top.map(p => p.zonaId));
-    const tranquilas = visibles.filter(p => p.nivel === 'verde' && !enTop.has(p.zonaId)).sort((a, b) => a.ratio - b.ratio).slice(0, 3);
+    // Copia de escaparate: Top 3 con más gente y Top 3 con menos, con la misma métrica (frente al día normal de
+    // cada zona) y el mismo día o periodo. Las zonas sin datos no entran en ninguno: no son «menos gente».
+    const conDato = E.prevDia.filter(p => p.nivel !== 'gris' && p.ratio != null && coincideTipo(E.zonasPorId[p.zonaId]));
+    const mas = conDato.slice().sort((a, b) => b.ratio - a.ratio).slice(0, 3);
+    const enMas = new Set(mas.map(p => p.zonaId));
+    const menos = conDato.filter(p => !enMas.has(p.zonaId)).sort((a, b) => a.ratio - b.ratio).slice(0, 3);
+    const sinDato = E.prevDia.filter(p => (p.nivel === 'gris' || p.ratio == null) && coincideTipo(E.zonasPorId[p.zonaId])).length;
     const filtro = E.tipo === 'todos' ? '' : ' · Solo ' + TIPO_NOMBRE[E.tipo].toLowerCase();
-    const periodo = esPeriodo(), media = periodo ? ', de media' : '';
+    const periodo = esPeriodo();
+    const fila = (p, i) => `<li><button type="button" class="rk rk-${p.nivel}" data-zona="${p.zonaId}">
+        <span class="rk-n" aria-hidden="true">${i + 1}</span>
+        <span class="rk-texto"><span class="rk-nombre" title="${esc(nombreZ(p.zonaId))}">${esc(nombreZ(p.zonaId))}</span>
+          <span class="rk-visit">${p.visitantes != null ? 'Unos ' + num(p.visitantes) + (periodo ? ' al día' : ' visitantes') : ''}</span></span>
+        <span class="rk-dato"><span class="rk-pct"><span aria-hidden="true">${pct(p.ratio)}</span><span class="sr">${esc(delta(p.ratio, periodo))}</span></span>${pill(p.nivel)}</span>
+      </button></li>`;
 
     $('#ranking').innerHTML = `
-      <h2 class="lat-titulo">Dónde habrá más presión</h2>
-      <p class="lat-sub">${esc(textoSel())}${periodo ? ' · Media por día' : ''}${esc(filtro)}</p>
-      <p class="lat-sub">Comparado con un día normal en cada zona.</p>
-      <ol class="ranking">${top.map((p, i) => `<li><button type="button" class="rk" data-zona="${p.zonaId}">
-        <span class="rk-n" aria-hidden="true">${i + 1}</span>
-        <span class="rk-nombre" title="${esc(nombreZ(p.zonaId))}">${esc(nombreZ(p.zonaId))}</span>
-        <span class="rk-dato">${pill(p.nivel)}<span class="rk-pct"><span aria-hidden="true">${pct(p.ratio)}</span><span class="sr">${esc(delta(p.ratio, periodo))}</span></span></span>
-      </button></li>`).join('') || '<li class="vacio">No hay zonas con este filtro.</li>'}</ol>
-      ${tranquilas.length ? `<h3 class="lat-titulo2">Con menos presión ${periodo ? 'esos días' : 'ese día'}</h3>
-      <ul class="tranquilas">${tranquilas.map(p => `<li><button type="button" class="tq" data-zona="${p.zonaId}">
-        <span class="rk-nombre" title="${esc(nombreZ(p.zonaId))}">${esc(nombreZ(p.zonaId))}</span>
-        <span class="rk-dato">${pill(p.nivel)}<span class="rk-pct"><span aria-hidden="true">${pct(p.ratio)}</span><span class="sr">${esc(delta(p.ratio, periodo))}</span></span></span>
-      </button></li>`).join('')}</ul>` : ''}
-      <p class="lat-ayuda">Elige una zona en el mapa para ver la previsión de los próximos días, las causas y alternativas con menos gente.</p>`;
+      <h2 class="lat-titulo">Dónde habrá más y menos gente</h2>
+      <p class="lat-sub">${esc(textoSel())}${periodo ? ' · media por día' : ''}${esc(filtro)} · frente a un día normal</p>
+      <h3 class="rk-grupo rk-grupo-mas"><span aria-hidden="true">▲</span> Más gente</h3>
+      <ol class="ranking">${mas.map(fila).join('') || '<li class="vacio">No hay zonas con este filtro.</li>'}</ol>
+      ${menos.length ? `<h3 class="rk-grupo rk-grupo-menos"><span aria-hidden="true">▼</span> Menos gente</h3>
+      <ol class="ranking">${menos.map(fila).join('')}</ol>` : ''}
+      ${sinDato ? `<p class="rk-nota">${sinDato === 1 ? 'Una zona no tiene' : sinDato + ' zonas no tienen'} datos y no ${sinDato === 1 ? 'entra' : 'entran'} en estas listas.</p>` : ''}`;
   }
 
   function renderLista() {
@@ -938,7 +940,7 @@
       <h2 id="pz-titulo" tabindex="-1">${esc(z.nombre)}</h2>
     </div>
     <div class="pz-cab">
-      <p class="pz-concejos">${esc(z.concejos.join(', '))}</p>
+      ${z.concejos.length > 1 || z.concejos[0] !== z.nombre ? `<p class="pz-concejos">${esc(z.concejos.join(', '))}</p>` : ''}
       ${E.lugarBuscado ? `<p class="pz-nota-lugar">Has buscado <strong>${esc(E.lugarBuscado)}</strong>. Mostramos los datos de toda la zona: no tenemos cifras de puntos concretos.</p>` : ''}
       ${tarjetaConcejo}
       <div class="pz-estado estado-${p.nivel}">
@@ -959,9 +961,10 @@
       html += seccionSitios(id);
       html += seccionAlternativas(alts, true);
     } else {
+      // Copia de escaparate: primero la acción (mejor día) y la gráfica; el resto, plegado con un resumen
+      html += seccionMejor(mejor, v, mejorDia);
       html += seccionSerie(serie, v);
       html += seccionFactores(factores, periodo ? fechaFactores : null);
-      html += seccionMejor(mejor, v, mejorDia);
       html += seccionAlternativas(alts, false);
       html += seccionConcejos(id);
       html += seccionEventosPanel(id);
@@ -996,12 +999,13 @@
   }
 
   // Secciones secundarias del panel: se pliegan (el panel es largo) y recuerdan si estaban abiertas
-  function plegable(html, abierta) {
+  function plegable(html, abierta, resumen) {
     const id = (html.match(/<h3 id="([^"]+)"/) || [])[1];
     const abrir = abierta || (id && E.plegablesAbiertos[id]);
+    const extra = resumen ? `<span class="pz-resumen">${resumen}</span>` : '';
     return html
       .replace(/^<section class="pz-sec" aria-labelledby="([^"]+)">\s*(<h3[^>]*>[\s\S]*?<\/h3>)/,
-        `<details class="pz-sec pz-plegable"${abrir ? ' open' : ''}><summary>$2<svg class="ico desp-flecha" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" class="ico-trazo"/></svg></summary>`)
+        `<details class="pz-sec pz-plegable"${abrir ? ' open' : ''}><summary>$2${extra}<svg class="ico desp-flecha" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" class="ico-trazo"/></svg></summary>`)
       .replace(/<\/section>\s*$/, '</details>');
   }
 
@@ -1064,12 +1068,15 @@
         <span class="fx-barra" aria-hidden="true"><span class="fx-eje"></span><span class="fx-val ${sube ? 'sube' : 'baja'}" style="width:${(abs / maxAbs * 50).toFixed(1)}%"></span></span>
         <span class="fx-num"><span aria-hidden="true">${sube ? '▲' : '▼'} </span>${sube ? '+' : MENOS}${abs}${NBSP}%<span class="sr">${sube ? ' más visitantes' : ' menos visitantes'}</span></span></li>`;
     }).join('');
-    return `<section class="pz-sec" aria-labelledby="pz-s-b">
+    // Copia de escaparate: plegado, con el factor que más pesa a la vista
+    const f0 = factores.slice().sort((a, b) => Math.abs(b.efecto) - Math.abs(a.efecto))[0];
+    const resumen = `Sobre todo: ${esc(f0.texto.toLowerCase())} (${f0.efecto >= 0 ? '+' : MENOS}${Math.abs(f0.efecto)}${NBSP}%)`;
+    return plegable(`<section class="pz-sec" aria-labelledby="pz-s-b">
       <h3 id="pz-s-b">¿Por qué?</h3>
       <p class="pz-ayuda">${fechaPico ? `Lo que más pesa el día con más gente del periodo: ${esc(fechaLarga(fechaPico).toLowerCase())}.` : 'Lo que más sube o baja la previsión de ese día.'}</p>
       <ul class="fx-lista">${filas}</ul>
       <p class="pz-nota">Cada efecto se mide frente a un día medio del modelo, no frente al día normal, y se multiplican entre sí: no se suman para dar la cifra de arriba.</p>
-    </section>`;
+    </section>`, false, resumen);
   }
 
   // mejorDia: propuesta del modelo (alternativas.json) si el día está en alerta; si no, el día más tranquilo de la gráfica
@@ -1107,7 +1114,10 @@
           <span class="alt-dato">${pill(a.nivel)}<span>${pct(a.ratio)}</span></span>
           <span class="alt-dist">${a.minutos != null ? `A unos ${a.minutos} min en coche` : `A unos ${a.km} km${a.delModelo ? ' · la menos saturada cerca, según el modelo' : ''}`}</span></button></li>`).join('')}</ul>`
       : `<p class="pz-ayuda">${esPeriodo() ? 'En esas fechas no hay zonas cercanas con menos gente. Prueba con otras.' : 'Ese día no hay zonas cercanas con menos gente. Prueba con otro día.'}</p>`;
-    return `<section class="pz-sec" aria-labelledby="pz-s-d"><h3 id="pz-s-d">${titulo}</h3>${cuerpo}</section>`;
+    const html = `<section class="pz-sec" aria-labelledby="pz-s-d"><h3 id="pz-s-d">${titulo}</h3>${cuerpo}</section>`;
+    // Copia de escaparate: plegado (salvo si la zona no tiene previsión), con la más cercana a la vista
+    if (sinDatos) return html;
+    return plegable(html, false, alts.length ? `${esc(alts[0].nombre)} (${pct(alts[0].ratio)})` : 'Ninguna con menos gente');
   }
 
   function barraReparto(titulo, a, b) {

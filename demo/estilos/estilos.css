@@ -932,3 +932,44 @@ dialog::backdrop { background: var(--velo); }
 .resalte-hover { stroke: var(--tinta); stroke-width: 2.4; stroke-dasharray: none; stroke-opacity: .8; }
 .resalte-sel { stroke: var(--tinta); stroke-width: 3.5; filter: drop-shadow(0 0 3px var(--superficie)) drop-shadow(0 0 1px var(--superficie)); }
 .contorno-zona { stroke-opacity: .38; }
+
+/* Top 3 con más y con menos gente (copia de escaparate) */
+.rk-grupo { display: flex; align-items: center; gap: .4rem; margin: .7rem 0 0; font: 700 1rem/1.2 var(--f-titulo); }
+.rk-grupo span { font-size: .8rem; }
+.rk-grupo-mas span { color: var(--rojo); }
+.rk-grupo-menos span { color: var(--verde); }
+#ranking .ranking { grid-template-columns: 1fr; gap: .35rem; margin-top: .4rem; }
+#ranking .rk { grid-template-columns: auto minmax(0, 1fr) auto; padding: .4rem .65rem; min-height: 52px; background: var(--superficie); border-left-width: 4px; }
+#ranking .rk-rojo { border-left-color: var(--rojo); }
+#ranking .rk-ambar { border-left-color: var(--ambar); }
+#ranking .rk-verde { border-left-color: var(--verde); }
+.rk-texto { display: grid; min-width: 0; }
+.rk-visit { font-size: .85rem; color: var(--tinta-2); font-variant-numeric: tabular-nums; }
+#ranking .rk-dato { flex-direction: column; align-items: flex-end; gap: .15rem; }
+#ranking .rk-pct { font-size: 1.3rem; line-height: 1.1; min-width: 0; }
+#ranking .rk-dato .pill { font-size: .75rem; }
+.rk-nota { margin-top: .7rem; font-size: .85rem; color: var(--tinta-2); }
+@media (min-width: 1061px) {
+  #panel-inicio .col-lateral #ranking { max-height: calc(100vh - 32.5rem); min-height: 0; padding: .9rem 1rem 1rem; }
+}
+
+/* Ficha compacta (copia de escaparate): mejor día en una tarjeta baja y secciones plegadas con resumen */
+#panel-zona .mm-grid { grid-template-columns: minmax(0, 1fr); margin-top: .4rem; }
+#panel-zona .mm { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .2rem .6rem; padding: .6rem .75rem; }
+#panel-zona .mm > .eyebrow, #panel-zona .mm > .mm-nota { grid-column: 1 / -1; }
+#panel-zona .mm > .mm-nota + .mm-nota { display: none; }
+#panel-zona .mm > .btn-mini { grid-column: 2; grid-row: 2 / span 2; align-self: center; }
+#panel-zona .mm > p:has(.pill) { grid-column: 1; }
+.pz-plegable > summary { flex-wrap: wrap; row-gap: 0; }
+.pz-resumen { order: 3; flex-basis: 100%; font-size: .9rem; color: var(--tinta-2); padding-bottom: .35rem; }
+@media (min-width: 1061px) {
+  /* Ficha flotante más alta (hasta abajo) y más densa; los mandos del mapa se apartan a su izquierda */
+  #panel-inicio .col-lateral.con-panel { bottom: 1rem; }
+  #panel-inicio:has(.col-lateral.con-panel) .mapa .leaflet-top.leaflet-right { right: calc(min(24rem, 38%) + 1.5rem); }
+  #panel-inicio:has(.col-lateral.con-panel) .mapa .leaflet-top.leaflet-left { right: calc(min(24rem, 38%) + 5.3rem); }
+  #panel-inicio:has(.col-lateral.con-panel) .mapa .leaflet-bottom.leaflet-right { right: calc(min(24rem, 38%) + 1.5rem); }
+  #panel-zona .pz-estado { margin-top: .4rem; padding: .65rem .8rem; }
+  #panel-zona .pz-estado .detalles { margin-top: .2rem; }
+  #panel-zona .pz-sec { margin-top: .8rem; padding-top: .7rem; }
+  #panel-zona .pz-nota-lugar { padding: .5rem .7rem; }
+}
