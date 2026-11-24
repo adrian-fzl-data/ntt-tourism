@@ -18,7 +18,7 @@
    Tema claro por defecto; el oscuro solo con data-theme="dark" (ya no sigue al sistema, para que la web no salga oscura sin querer). */
 :root {
   --bg: #F6F8F4; --superficie: #FFFFFF; --superficie-2: #EEF3EC;
-  --tinta: #14231A; --tinta-2: #536358; --linea: #DFE7DF; --linea-fuerte: #A7B8AB;
+  --tinta: #14231A; --tinta-2: #435248; --linea: #DFE7DF; --linea-fuerte: #A7B8AB;
   --acento: #1F6B45; --acento-tinta: #FFFFFF; --acento-suave: #DCEFE3;
   --foco: #1F6B45; --foco-suave: rgba(31, 107, 69, .25);
   --pista: #D5E0D6;
@@ -28,7 +28,8 @@
   --gris: #6A747D; --gris-suave: #E4E7EA;
   --mapa-verde: #86CFA0; --mapa-ambar: #FBCB4E; --mapa-rojo: #F07B6C; --mapa-gris: #E3E7E3;
   --trama-ambar: #A86F00; --trama-rojo: #8E1C14; --trama-gris: #7D868E;
-  --mapa-borde: #FFFFFF; --mar: #E4EFF0;
+  --mapa-borde: #FFFFFF; --mar: #CFE4EB; --mar-ola: #B4D2DD; --mar-texto: #4F7584;
+  --tierra: #EEEDE7; --tierra-borde: #D6D3C8; --tierra-texto: #8A877D; --costa-halo: #FFFFFF; --contorno-asturias: #2F3B36;
   --aviso-bg: #FFF4D6; --aviso-borde: #E3B13E; --raya-clara: rgba(255, 255, 255, .4);
   --sombra: none; /* Copia de escaparate: sin sombras decorativas */
   --f-titulo: 'Schibsted Grotesk', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
@@ -55,7 +56,8 @@
   --gris: #97A2AC; --gris-suave: #262F37;
   --mapa-verde: #235A3A; --mapa-ambar: #6A5014; --mapa-rojo: #6E2B24; --mapa-gris: #2B343C;
   --trama-ambar: #E8B54C; --trama-rojo: #FF9184; --trama-gris: #6C7782;
-  --mapa-borde: #0D141A; --mar: #1D2934;
+  --mapa-borde: #0D141A; --mar: #15212B; --mar-ola: #1E3240; --mar-texto: #7FA3B3;
+  --tierra: #232A30; --tierra-borde: #323B43; --tierra-texto: #7D8790; --costa-halo: #0D141A; --contorno-asturias: #C9D3CE;
   --aviso-bg: #2E2610; --aviso-borde: #8C6A1E; --raya-clara: rgba(255, 255, 255, .18);
   --sombra: none;
   --g-real: #d95926; --g-prev: #3987e5;
@@ -223,6 +225,7 @@ body { background: var(--bg); color: var(--tinta); }
           <defs>
             <pattern id="relleno-ambar" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="9" height="9" class="p-ambar"/><rect width="2.6" height="9" class="t-ambar"/></pattern>
             <pattern id="relleno-rojo" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" class="p-rojo"/><path d="M0 0 10 10M10 0 0 10" class="t-rojo"/></pattern>
+            <pattern id="trama-agua" width="36" height="18" patternUnits="userSpaceOnUse"><rect width="36" height="18" class="p-agua"/><path d="M0 12 Q9 8 18 12 T36 12" class="t-agua"/></pattern>
             <pattern id="relleno-gris" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" class="p-gris"/><circle cx="5" cy="5" r="1.4" class="t-gris"/></pattern>
           </defs>
         </svg>
@@ -316,6 +319,7 @@ body { background: var(--bg); color: var(--tinta); }
 <script src="vendor/leaflet/leaflet.js"></script>
 <script src="vendor/topojson-client.min.js"></script>
 <script src="interfaz/geo-asturias.js"></script>
+<script src="interfaz/geo-entorno.js"></script>
 <!-- Interfaz -->
 <script src="interfaz/mapa.js"></script>
 <!-- Pestañas Funciones avanzadas y Sobre los datos (antes de app.js, que las monta) -->

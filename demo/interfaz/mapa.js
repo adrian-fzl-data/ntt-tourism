@@ -187,6 +187,21 @@ window.MapaAsturias = (function () {
     else map.on('resize', reajustar);
     L.control.zoom({ position: 'topright', zoomInTitle: 'Acercar', zoomOutTitle: 'Alejar' }).addTo(map);
 
+    /* ---------- Entorno: mar con oleaje, tierra vecina y contorno de Asturias (solo dibujo, sin datos) ---------- */
+    map.createPane('mar').style.zIndex = 150;
+    map.createPane('entorno').style.zIndex = 200;
+    map.createPane('nombres-geo').style.zIndex = 220;
+    ['mar', 'entorno', 'nombres-geo'].forEach(p => { map.getPane(p).style.pointerEvents = 'none'; });
+    L.rectangle(limites.pad(4), { pane: 'mar', interactive: false, className: 'mar-agua', stroke: false }).addTo(map);
+    if (window.GeoEntorno) L.geoJSON(window.GeoEntorno, { pane: 'entorno', interactive: false, style: { className: 'tierra-vecina' } }).addTo(map);
+    const costa = window.topojson.mesh(topo, topo.objects.concejos, (a, b) => a === b);
+    L.geoJSON(costa, { pane: 'entorno', interactive: false, style: { className: 'halo-asturias' } }).addTo(map);
+    [['Mar Cantábrico', 43.74, -5.62, 'nombre-mar'], ['Galicia', 43.12, -7.3, ''], ['Castilla y León', 42.86, -5.75, ''], ['Cantabria', 43.2, -4.38, '']]
+      .forEach(([n, lat, lon, cls]) => L.marker([lat, lon], {
+        pane: 'nombres-geo', interactive: false, keyboard: false,
+        icon: L.divIcon({ className: 'nombre-geo ' + cls, iconSize: null, html: `<span>${n}</span>` }),
+      }).addTo(map));
+
     map.createPane('contornos').style.zIndex = 410;
     map.createPane('resalte').style.zIndex = 415;
     map.createPane('etiquetas').style.zIndex = 450;
@@ -238,6 +253,8 @@ window.MapaAsturias = (function () {
     L.geoJSON({ type: 'FeatureCollection', features: fZonas }, {
       pane: 'contornos', interactive: false, style: { className: 'contorno-zona', fill: false },
     }).addTo(map);
+    // Contorno de Asturias (costa y límites con las provincias vecinas), por encima de todo lo demás
+    L.geoJSON(costa, { pane: 'contornos', interactive: false, style: { className: 'contorno-asturias' } }).addTo(map);
 
     // Teclado: cada polígono visible es un botón. Intro o Espacio lo elige; al enfocarlo se ve su recuadro.
     ['zona', 'concejo'].forEach(tipo => Object.keys(capas[tipo]).forEach(id => {

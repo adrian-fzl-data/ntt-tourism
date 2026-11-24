@@ -841,7 +841,7 @@ dialog::backdrop { background: var(--velo); }
  * ========================================================================== */
 @media (min-width: 1061px) {
   :root {
-    --panel-fondo: color-mix(in srgb, var(--superficie) 90%, transparent);
+    --panel-fondo: color-mix(in srgb, var(--superficie) 75%, transparent);
     --panel-borde: color-mix(in srgb, var(--linea-fuerte) 55%, transparent);
   }
   #panel-inicio.envoltura { max-width: none; padding: 0; position: relative; }
@@ -853,7 +853,7 @@ dialog::backdrop { background: var(--velo); }
 
   .flota-info, #panel-inicio .filtros, #panel-inicio .col-lateral > .tarjeta {
     background: var(--panel-fondo); border: 1px solid var(--panel-borde); border-radius: var(--radio);
-    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(14px) saturate(1.3); backdrop-filter: blur(14px) saturate(1.3);
   }
   .flota-info {
     position: absolute; z-index: 1100; top: 1rem; left: 1rem; width: min(27rem, calc(100% - 2rem));
@@ -883,6 +883,12 @@ dialog::backdrop { background: var(--velo); }
     border-radius: var(--radio); background: none; border: 0; box-shadow: none; scrollbar-width: thin;
   }
   #panel-inicio .col-lateral.con-panel #panel-zona { border: 1px solid var(--panel-borde); }
+  /* Todo lo que flota sobre el mapa es translúcido, con el mismo fondo legible */
+  #panel-inicio .leyenda-mini, #panel-inicio .mapa-todo, #panel-inicio .mapa .leaflet-bar a, #panel-inicio .mapa .leaflet-control-attribution {
+    background: var(--panel-fondo); -webkit-backdrop-filter: blur(14px) saturate(1.3); backdrop-filter: blur(14px) saturate(1.3);
+  }
+  #panel-inicio .leyenda-mini, #panel-inicio .mapa-todo { border: 1px solid var(--panel-borde); }
+  #panel-inicio .mapa .leaflet-bar { border-color: var(--panel-borde); }
   .mapa .leaflet-top.leaflet-right { top: auto; bottom: 1.6rem; }
   .mapa .leaflet-top.leaflet-left { top: auto; bottom: 2.2rem; left: auto; right: 4.8rem; }
   .flota-info .accesos, .flota-info .paso-fecha { width: 100%; }
@@ -907,3 +913,22 @@ dialog::backdrop { background: var(--velo); }
   #panel-inicio .filtros { flex-wrap: wrap; justify-content: flex-end; max-width: 46rem; }
   #panel-inicio .filtro-criterio { text-align: right; }
 }
+
+/* Mapa: mar, tierra vecina, contorno y estados de los concejos (copia de escaparate) */
+.mapa { background: var(--mar); }
+.mar-agua { fill: url(#trama-agua); fill-opacity: 1; }
+.p-agua { fill: var(--mar); }
+.t-agua { fill: none; stroke: var(--mar-ola); stroke-width: 1.2; stroke-linecap: round; }
+.tierra-vecina { fill: var(--tierra); fill-opacity: 1; stroke: var(--tierra-borde); stroke-width: 1; stroke-linejoin: round; }
+.halo-asturias { fill: none; stroke: var(--costa-halo); stroke-width: 7; stroke-opacity: .85; stroke-linejoin: round; }
+.contorno-asturias { fill: none; stroke: var(--contorno-asturias); stroke-width: 1.6; stroke-opacity: .7; stroke-linejoin: round; }
+.nombre-geo span {
+  display: block; transform: translate(-50%, -50%); white-space: nowrap;
+  font: 600 .8rem/1 var(--f-titulo); letter-spacing: .08em; color: var(--tierra-texto);
+}
+.nombre-geo.nombre-mar span { font-size: 1rem; font-style: italic; font-weight: 500; letter-spacing: .14em; color: var(--mar-texto); }
+.area { stroke-width: 1.1; stroke-opacity: .95; transition: fill-opacity .2s ease, filter .2s ease; }
+.area:hover { filter: brightness(1.05) saturate(1.08); }
+.resalte-hover { stroke: var(--tinta); stroke-width: 2.4; stroke-dasharray: none; stroke-opacity: .8; }
+.resalte-sel { stroke: var(--tinta); stroke-width: 3.5; filter: drop-shadow(0 0 3px var(--superficie)) drop-shadow(0 0 1px var(--superficie)); }
+.contorno-zona { stroke-opacity: .38; }
