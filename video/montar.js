@@ -1,9 +1,12 @@
-/* Monta el vídeo a partir de la grabación de video/grabar.js.
+/* Monta el vídeo a partir de los fotogramas de video/grabar.js y la música de video/musica.py.
  *
- * Uso: node video/montar.js --salida /ruta/salida [--titular "…"] [--direccion "…"]
+ * Uso: node video/montar.js --salida /ruta/salida [--titular "…"] [--direccion "…"] [--musica pista.wav] [--sin-musica]
+ *
+ * Lee de la carpeta de salida fotogramas/f00000.jpg… y guion.json (los deja grabar.js).
+ * Si no se pasa --musica, genera la pista original con video/musica.py a la duración del guion.
  *
  * Deja en la carpeta de salida:
- *   ntt-tourism-16x9.mp4  1920×1080, H.264, sin sonido (LinkedIn lo reproduce en silencio)
+ *   ntt-tourism-16x9.mp4  1920×1080, 60 fps, H.264 + AAC
  *   ntt-tourism-4x5.mp4   1080×1350 para el móvil: el mismo vídeo con una franja arriba (titular) y abajo (dirección)
  * Las franjas se dibujan con la web (mismos colores y tipografía) y se superponen con ffmpeg.
  */
@@ -17,17 +20,27 @@ const SALIDA = path.resolve(arg('salida', 'video-salida'));
 const URL = arg('url', 'http://127.0.0.1:8731/demo/');
 const TITULAR = arg('titular', 'Avisar de los días de lleno en Asturias, zona a zona');
 const DIRECCION = arg('direccion', 'DIRECCIÓN PENDIENTE');
-const marcas = JSON.parse(fs.readFileSync(path.join(SALIDA, 'marcas.json'), 'utf8'));
-const bruto = path.join(SALIDA, 'bruto.webm');
+const SIN_MUSICA = process.argv.includes('--sin-musica');
+const guion = JSON.parse(fs.readFileSync(path.join(SALIDA, 'guion.json'), 'utf8'));
+const FPS = guion.fps, DUR = guion.fotogramas / guion.fps;
 const ff = (...a) => execFileSync('ffmpeg', ['-v', 'error', '-y', ...a], { stdio: 'inherit' });
 
 (async () => {
-  const ini = marcas.inicio.toFixed(3), dur = marcas.duracion.toFixed(3);
-  const h264 = ['-c:v', 'libx264', '-preset', 'slow', '-crf', '20', '-pix_fmt', 'yuv420p', '-r', '30', '-movflags', '+faststart', '-an'];
+  // Música: la pista dada o la original generada a la duración exacta
+  let musica = arg('musica', null);
+  if (!musica && !SIN_MUSICA) {
+    musica = path.join(SALIDA, 'musica.wav');
+    execFileSync('python3', [path.join(__dirname, 'musica.py'), musica, '--duracion', String(DUR)], { stdio: 'inherit' });
+  }
+  const audioEnt = musica ? ['-i', musica] : [];
+  const audio = musica ? ['-map', '1:a', '-c:a', 'aac', '-b:a', '192k', '-shortest'] : ['-an'];
+  const h264 = ['-c:v', 'libx264', '-preset', 'slow', '-crf', '18', '-pix_fmt', 'yuv420p', '-r', String(FPS),
+    '-g', String(FPS * 2), '-movflags', '+faststart'];
 
-  // 16:9: recorte exacto del guion
+  // 16:9: los fotogramas tal cual
   const v169 = path.join(SALIDA, 'ntt-tourism-16x9.mp4');
-  ff('-ss', ini, '-i', bruto, '-t', dur, ...h264, v169);
+  ff('-framerate', String(FPS), '-i', path.join(SALIDA, 'fotogramas', 'f%05d.jpg'), ...audioEnt,
+    '-map', '0:v', ...h264, ...audio, v169);
 
   // Franjas del 4:5, dibujadas con la propia web para heredar colores y tipografía
   const AN = 1080, AL = 1350, VID = Math.round(AN * 9 / 16 / 2) * 2, BANDA = (AL - VID) / 2;
@@ -52,7 +65,7 @@ const ff = (...a) => execFileSync('ffmpeg', ['-v', 'error', '-y', ...a], { stdio
   const v45 = path.join(SALIDA, 'ntt-tourism-4x5.mp4');
   ff('-i', v169, '-i', franjas, '-filter_complex',
     `[0:v]scale=${AN}:${VID}:flags=lanczos,pad=${AN}:${AL}:0:${BANDA}:black[v];[v][1:v]overlay=0:0[o]`,
-    '-map', '[o]', ...h264, v45);
+    '-map', '[o]', ...(musica ? ['-map', '0:a', '-c:a', 'copy'] : ['-an']), ...h264, v45);
 
-  for (const f of [v169, v45]) console.log(path.basename(f), execFileSync('ffprobe', ['-v', 'error', '-show_entries', 'stream=width,height:format=duration', '-of', 'csv=p=0', f]).toString().trim().replace(/\n/g, ' · '));
+  for (const f of [v169, v45]) console.log(path.basename(f), execFileSync('ffprobe', ['-v', 'error', '-show_entries', 'stream=codec_name,width,height,r_frame_rate:format=duration', '-of', 'csv=p=0', f]).toString().trim().replace(/\n/g, ' · '));
 })();
