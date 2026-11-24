@@ -973,3 +973,37 @@ dialog::backdrop { background: var(--velo); }
   #panel-zona .pz-sec { margin-top: .8rem; padding-top: .7rem; }
   #panel-zona .pz-nota-lugar { padding: .5rem .7rem; }
 }
+
+/* Legibilidad para cualquiera (copia de escaparate): textos más grandes, controles más grandes y paneles que se separan del mapa */
+.subtitulo-2 { color: var(--tinta-2); }
+.eyebrow { font-size: .85rem; }
+.ayuda, .filtro-et, .marca-sub, .ps-concejo, .pz-fecha, .pz-ayuda, .alt-dist, .ev-meta, .ev-asis, .sc-concejo, .g-nota, .rg-pico, .tip-cifra, .tip-acc { font-size: .95rem; }
+.pz-concejos, .lat-ayuda, .rp-ley, .pz-fiab, .lat-sub { font-size: .95rem; }
+.tip-sub, .mm-nota, .met-et, .ss-concejo, .pz-nota, .dc-leyenda, .ps-nota, .umbral-escala, .marcas-ayuda, .cal-tabla th, .tabla thead th { font-size: .88rem; }
+.etq { font-size: .88rem; }
+.pill { font-size: .9rem; }
+.et-mapa { font-size: .76rem; }
+.dc-et { font-size: .8rem; }
+.leyenda-mini { font-size: .9rem; gap: .3rem 1rem; padding: .4rem .75rem; }
+.mapa-todo { font-size: .95rem; min-height: 44px; padding: .4rem .9rem; }
+.mapa .leaflet-control-attribution { font-size: .75rem; }
+.pz-delta { font-size: 1.3rem; }
+@media (min-width: 1061px) {
+  .flota-info .subtitulo-pagina { font-size: .98rem; line-height: 1.45; margin-bottom: .35rem; }
+  .flota-info .subtitulo-2 { font-size: .9rem; margin-bottom: .5rem; }
+  .flota-info .chip-btn { min-height: 44px; font-size: .95rem; }
+  .flota-info, #panel-inicio .filtros, #panel-inicio .col-lateral > .tarjeta, #panel-inicio .leyenda-mini {
+    box-shadow: 0 10px 30px -12px color-mix(in srgb, var(--tinta) 35%, transparent);
+    border-radius: 16px;
+  }
+}
+@media (max-width: 720px) {
+  .leyenda-mini { font-size: .8rem; }
+  .mapa-todo { font-size: .85rem; }
+}
+@media (min-width: 1061px) {
+  #panel-inicio .col-lateral:not(.con-panel) { max-height: calc(100% - var(--flota-fin, 32rem) - 4.2rem); display: flex; flex-direction: column; }
+  #panel-inicio .col-lateral:not(.con-panel) #ranking { max-height: none; min-height: 0; flex: 1 1 auto; overflow-y: auto; }
+}
+.banda-equipo a { display: inline-block; padding-block: .35rem; }
+.nombre-geo span { font-size: .85rem; }

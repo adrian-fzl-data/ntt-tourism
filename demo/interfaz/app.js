@@ -149,6 +149,11 @@
    * ==================================================================== */
   async function iniciar() {
     avisoSintetico();
+    // Copia de escaparate: el panel de abajo a la izquierda (Top 3) empieza donde acaba el de arriba, mida lo que mida
+    const flota = $('.flota-info');
+    if (flota && window.ResizeObserver) new ResizeObserver(() => {
+      document.documentElement.style.setProperty('--flota-fin', (flota.offsetTop + flota.offsetHeight) + 'px');
+    }).observe(flota);
     // Recuerda qué secciones plegables del panel ha abierto el usuario (el panel se repinta al cambiar de fecha)
     $('#panel-zona').addEventListener('toggle', e => {
       const h = e.target.matches && e.target.matches('.pz-plegable') && e.target.querySelector('h3[id]');
@@ -339,7 +344,7 @@
     $('#fecha-texto').textContent = textoSel();
 
     const chips = [];
-    if (E.info.demo) chips.push('<span class="etq etq-hoy">Demo · validación con datos de 2024</span>');
+    if (E.info.demo) chips.push('<span class="etq etq-hoy">Ejemplo real: agosto de 2024</span>');
     else if (E.desde === hoy && E.info.esHoy) chips.push(`<span class="etq etq-hoy">${periodo ? 'Desde hoy' : 'Hoy'}</span>`);
     const especiales = [];
     E.calSel.forEach(c => {
