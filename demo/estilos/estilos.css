@@ -900,3 +900,10 @@ dialog::backdrop { background: var(--velo); }
     position: sticky; top: 1rem; right: auto; bottom: auto; width: min(24rem, 30vw); max-height: calc(100vh - 2rem);
   }
 }
+
+/* Criterio del filtro de tipo (copia de escaparate): visible solo con Costa o Montaña */
+.filtro-criterio { order: 9; flex-basis: 100%; margin: 0; font-size: .9rem; line-height: 1.4; color: var(--tinta-2); }
+@media (min-width: 1061px) {
+  #panel-inicio .filtros { flex-wrap: wrap; justify-content: flex-end; max-width: 46rem; }
+  #panel-inicio .filtro-criterio { text-align: right; }
+}

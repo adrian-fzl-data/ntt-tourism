@@ -47,7 +47,7 @@
  *                                      fueraDeRango = la fecha real es posterior al último día con previsión
  * getZonas()                        -> [{ id, nombre, tipos:['costa'|'montana'|'ciudad'], concejos[], lugares[], vecinos|null, principal, sinDatos }]
  *                                      zonas del modelo (MITMA); concejos = nombres; principal = zona estrella (Picos de Europa)
- * getConcejos()                     -> [{ id, nombre, zonaId|null }]   id = código INE (5 cifras, '33xxx'),
+ * getConcejos()                     -> [{ id, nombre, zonaId|null, tipos[] }]   id = código INE (5 cifras, '33xxx'),
  *                                      el mismo que usa interfaz/geo-asturias.js; zonaId null = fuera de las zonas del modelo
  * getSitios()                       -> [{ id, nombre, concejos:[INE], lat, lon, ubicacionAproximada, foto:{src, autor, licencia, pagina}|null }]
  *                                      sitios de interés; concejos[0] = concejo principal. NO llevan previsión propia:

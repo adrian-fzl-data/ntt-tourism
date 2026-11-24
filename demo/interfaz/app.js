@@ -54,6 +54,12 @@
   }
   const LETRA = ['D', 'L', 'M', 'X', 'J', 'V', 'S'];
   const TIPO_NOMBRE = { costa: 'Costa', montana: 'Montaña', ciudad: 'Ciudad' };
+  // Copia de escaparate: «Ciudad» ya no se muestra (casi ninguna zona encaja); los concejos sin costa ni montaña son «Centro»
+  const tiposVisibles = t => { const v = t.filter(x => x !== 'ciudad').map(x => TIPO_NOMBRE[x]); return v.length ? v : ['Centro']; };
+  const CRITERIO_TIPO = {
+    costa: 'Costa: los 20 concejos que tocan el mar.',
+    montana: 'Montaña: concejos de interior de las comarcas de montaña (Occidente, Suroccidente, Somiedo, Nalón, Cuencas, Redes y Picos de Europa).',
+  };
 
   function num(n) { return n == null ? '—' : String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
   function pct(r) {
@@ -630,6 +636,9 @@
   function configurarFiltros() {
     $$('input[name="tipo"]').forEach(r => r.addEventListener('change', () => {
       E.tipo = r.value;
+      const crit = $('#filtro-criterio');
+      crit.textContent = CRITERIO_TIPO[E.tipo] ? CRITERIO_TIPO[E.tipo] + ' Las zonas de varios concejos cuentan si lo son al menos la mitad. Los concejos del centro solo salen en «Todos».' : '';
+      crit.hidden = !CRITERIO_TIPO[E.tipo];
       renderMapa();
       renderRanking();
       renderSitios({ reiniciar: true });
@@ -704,7 +713,7 @@
     const zonas = {}, concejos = {};
     E.zonas.forEach(z => { zonas[z.id] = estadoArea(z.nombre, E.prevPorZona[z.id], coincideTipo(z)); });
     E.concejos.forEach(c => {
-      concejos[c.id] = estadoArea(`${c.nombre}, en ${nombreZ(c.zonaId)}`, E.prevPorConcejo[c.id], coincideTipo(E.zonasPorId[c.zonaId]));
+      concejos[c.id] = estadoArea(`${c.nombre}, en ${nombreZ(c.zonaId)}`, E.prevPorConcejo[c.id], coincideTipo(c));
     });
     E.mapa.actualizar({ zonas, concejos, zonaSel: E.zona, concejoSel: E.concejo });
   }
@@ -784,7 +793,7 @@
       <tbody>${filas.map(p => {
         const z = E.zonasPorId[p.zonaId];
         return `<tr><th scope="row"><button type="button" class="enlace" data-zona="${p.zonaId}">${esc(z.nombre)}</button></th>
-          <td>${esc(z.tipos.map(t => TIPO_NOMBRE[t]).join(', '))}</td>
+          <td>${esc(tiposVisibles(z.tipos).join(', '))}</td>
           <td>${pill(p.nivel)}</td>
           <td class="num">${pct(p.ratio)}</td>
           <td class="num">${p.visitantes != null ? num(p.visitantes) + ` <span class="rango-txt">(${num(p.min)}–${num(p.max)})</span>` : '—'}</td>
@@ -920,7 +929,7 @@
         <button type="button" class="btn-mini" data-ver-zona>Ver la zona entera</button>
       </div>` : '';
 
-    const tipos = z.tipos.map(t => TIPO_NOMBRE[t]).join(' y ');
+    const tipos = tiposVisibles(z.tipos).join(' y ');
     let html = `<div class="pz-fija">
       <div class="pz-cab-fila">
         <p class="eyebrow">${esc(tipos)}</p>
@@ -1214,7 +1223,7 @@
     opts = opts || {};
     if (opts.reiniciar || !E.sitiosVisibles) E.sitiosVisibles = PASO_SITIOS;
     const periodo = esPeriodo();
-    const filtrados = E.sitios.filter(s => coincideTipo(E.zonasPorId[(E.concejosPorId[s.concejos[0]] || {}).zonaId]));
+    const filtrados = E.sitios.filter(s => s.concejos.some(c => coincideTipo(E.concejosPorId[c])));
     const orden = E.sitiosOrden;
     filtrados.sort((a, b) => orden === 'concejo'
       ? nombreC(a.concejos[0]).localeCompare(nombreC(b.concejos[0]), 'es') || a.nombre.localeCompare(b.nombre, 'es')
@@ -1286,7 +1295,7 @@
     opts = opts || {};
     if (opts.reiniciar || !E.eventosVisibles) E.eventosVisibles = PASO_EVENTOS;
     const d = E.eventos, cat = E.eventosCat;
-    const lista = d.eventos.filter(e => (cat === 'todas' || e.categoria === cat) && (!e.concejo || coincideTipo(E.zonasPorId[zonaDeConcejo(e.concejo)])));
+    const lista = d.eventos.filter(e => (cat === 'todas' || e.categoria === cat) && (!e.concejo || coincideTipo(E.concejosPorId[e.concejo])));
     const vis = lista.slice(0, E.eventosVisibles);
     $('#eventos-sub').textContent = textoSel() + (E.tipo === 'todos' ? '' : ' · Solo ' + TIPO_NOMBRE[E.tipo].toLowerCase());
     $('#eventos-nota').textContent = 'Festivos de Asturias y de cada concejo (BOE y BOPA), partidos del Real Oviedo y del Sporting en su estadio, y siete grandes citas al año (fiestas, festivales, ferias y pruebas deportivas) recopiladas de sus webs oficiales y de prensa; las de 2027 todavía no están recogidas. Son días en los que puede venir más gente de lo normal.';

@@ -106,14 +106,19 @@
     comarcas.forEach(z => { comarcaPorId[z.id] = z; });
     const concejos = CAT.concejos().map(c => ({
       id: c.id, nombre: c.nombre, zonaId: zonaDeConcejo[c.id] || null,
-      tipos: (comarcaPorId[c.zonaId] || { tipos: [] }).tipos,
+      // Tipo de destino del propio concejo: «costa» solo si tiene litoral; el resto de tipos, de su comarca
+      // (así un concejo de interior de una comarca costera no sale en «Costa», ni uno con mar en «Montaña»)
+      tipos: c.litoral ? ['costa'] : (comarcaPorId[c.zonaId] || { tipos: [] }).tipos.filter(t => t !== 'costa'),
     }));
     const concejoPorId = {};
     concejos.forEach(c => { concejoPorId[c.id] = c; });
     zonas.forEach(z => {
       const cs = z.ine.map(i => concejoPorId[i]).filter(Boolean);
       z.concejos = cs.filter(c => c.zonaId === z.id);
-      z.tipos = Array.from(new Set([].concat.apply([], cs.map(c => c.tipos))));
+      // Tipo de la zona: los que tienen al menos la mitad de sus concejos (una zona de interior con un solo
+      // concejo costero no sale en «Costa»)
+      z.tipos = Array.from(new Set([].concat.apply([], cs.map(c => c.tipos))))
+        .filter(t => cs.filter(c => c.tipos.indexOf(t) !== -1).length * 2 >= cs.length);
       // Lugares: los de las comarcas del catálogo que caen enteras dentro de esta zona del modelo
       z.lugares = [].concat.apply([], comarcas
         .filter(zc => zc.concejos.length && zc.concejos.every(i => zonaDeConcejo[i] === z.id))
@@ -239,7 +244,7 @@
         sinDatos: !Object.keys(M.elegida).some(k => k.endsWith('|' + z.id)),
       })));
     },
-    getConcejos() { return listo().then(() => M.concejos.map(c => ({ id: c.id, nombre: c.nombre, zonaId: c.zonaId }))); },
+    getConcejos() { return listo().then(() => M.concejos.map(c => ({ id: c.id, nombre: c.nombre, zonaId: c.zonaId, tipos: c.tipos.slice() }))); },
     getSitios() { return CAT.sitios(); },
     getEventos(desde, hasta) {
       // Agenda de las salidas (festivos, partidos y grandes eventos de fuentes públicas: los mismos que usa

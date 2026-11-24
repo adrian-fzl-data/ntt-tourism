@@ -79,13 +79,19 @@ window.Catalogo = (function () {
     ['33055', 'Ribadedeva', 'cabrales']
   ];
 
+  // Concejos con litoral (los 20 que tocan el mar Cantábrico). Comprobado con la geometría IGN del mapa
+  // (interfaz/geo-asturias.js): son los concejos con borde exterior orientado al norte en la costa.
+  // Un concejo con litoral es «costa» aunque su comarca sea de montaña; uno sin litoral nunca es «costa».
+  const CON_LITORAL = ['33017', '33070', '33023', '33018', '33041', '33034', '33021', '33039', '33069', '33016',
+    '33004', '33025', '33014', '33024', '33076', '33019', '33013', '33056', '33036', '33055'];
+
   const copia = a => a.slice();
   return Object.freeze({
     // [{ id, tipos, lugares, concejos:[INE] }]
     zonas: () => ZONAS.map(z => ({ id: z.id, tipos: copia(z.tipos), lugares: copia(z.lugares),
       concejos: CONCEJOS.filter(c => c[2] === z.id).map(c => c[0]) })),
-    // [{ id (INE), nombre, zonaId (comarca del catálogo) }]
-    concejos: () => CONCEJOS.map(([id, nombre, zonaId]) => ({ id, nombre, zonaId })),
+    // [{ id (INE), nombre, zonaId (comarca del catálogo), litoral }]
+    concejos: () => CONCEJOS.map(([id, nombre, zonaId]) => ({ id, nombre, zonaId, litoral: CON_LITORAL.indexOf(id) !== -1 })),
     // Sitios de interés (datos/sitios.js): sin previsión propia
     sitios: () => (window.SitiosTuristicos || []).map(s => Object.assign({}, s, { concejos: s.concejos.slice(), foto: s.foto && Object.assign({}, s.foto) })),
   });
