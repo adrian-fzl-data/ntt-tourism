@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>NTT Tourism · Avisar de los días de lleno en Asturias</title>
+<meta name="description" content="Proyecto de equipo del Hackathon TalentUO 2026: un modelo que prevé, zona a zona, cuánta gente llegará a Asturias frente a un día normal, y una web que lo muestra como un semáforo.">
+<meta name="theme-color" content="#F6F8F4">
+<link rel="icon" href="demo/favicon.svg" type="image/svg+xml">
+<!-- Vista previa al compartir el enlace (LinkedIn, WhatsApp, portafolio) -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:title" content="NTT Tourism · Avisar de los días de lleno en Asturias">
+<meta property="og:description" content="Previsión de afluencia turística zona a zona, con un semáforo. Proyecto de equipo · Hackathon TalentUO 2026.">
+<meta property="og:url" content="https://adrian-fzl-data.github.io/ntt-tourism/">
+<meta property="og:image" content="https://adrian-fzl-data.github.io/ntt-tourism/medios/vista-previa.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Mapa de Asturias con las zonas en verde, ámbar y rojo según la gente prevista el 15 de agosto de 2024">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<style>
+/* Mismos colores y tipografía que la demo (demo/index.html) */
+:root {
+  --bg: #F6F8F4; --superficie: #FFFFFF; --superficie-2: #EEF3EC;
+  --tinta: #14231A; --tinta-2: #435248; --linea: #DFE7DF;
+  --acento: #1F6B45; --acento-tinta: #FFFFFF; --acento-suave: #DCEFE3;
+  --rojo: #B3261E; --ambar-vivo: #E3A21A; --mapa-verde: #86CFA0;
+  --f-titulo: 'Schibsted Grotesk', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --f-texto: 'Atkinson Hyperlegible', Verdana, 'Segoe UI', sans-serif;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--tinta); font: 400 18px/1.55 var(--f-texto); }
+a { color: var(--acento); }
+.banda { background: var(--superficie-2); border-bottom: 1px solid var(--linea); font-size: 15px; padding: 8px 16px; text-align: center; color: var(--tinta-2); }
+main { max-width: 1120px; margin: 0 auto; padding: 40px 16px 48px; }
+.cabeza { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 40px; align-items: center; }
+.semaforo { display: flex; gap: 8px; margin-bottom: 16px; }
+.semaforo i { width: 14px; height: 14px; border-radius: 50%; }
+h1 { font: 800 clamp(34px, 4.2vw, 50px)/1.06 var(--f-titulo); letter-spacing: -.02em; margin: 0 0 16px; text-wrap: balance; }
+.entrada { font-size: 20px; color: var(--tinta-2); margin: 0 0 24px; }
+.botones { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn { display: inline-flex; align-items: center; min-height: 52px; padding: 0 22px; border-radius: 12px; font: 700 18px/1 var(--f-titulo);
+  text-decoration: none; border: 2px solid var(--acento); color: var(--acento); background: var(--superficie); }
+.btn.principal { background: var(--acento); color: var(--acento-tinta); }
+.btn:focus-visible { outline: 3px solid var(--ambar-vivo); outline-offset: 3px; }
+figure { margin: 0; }
+video { display: block; width: 100%; height: auto; border-radius: 16px; border: 1px solid var(--linea); background: var(--superficie-2);
+  box-shadow: 0 18px 40px -24px rgba(20, 35, 26, .45); }
+figcaption { font-size: 15px; color: var(--tinta-2); margin-top: 8px; }
+.cifras { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 48px 0; padding: 0; list-style: none; }
+.cifras li { background: var(--superficie); border: 1px solid var(--linea); border-radius: 16px; padding: 20px 22px; }
+.cifras b { display: block; font: 800 38px/1.1 var(--f-titulo); letter-spacing: -.02em; color: var(--acento); margin-bottom: 6px; }
+.cifras span { color: var(--tinta-2); }
+.dos { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; }
+h2 { font: 700 24px/1.2 var(--f-titulo); margin: 0 0 10px; }
+.dos p { margin: 0 0 12px; }
+.en { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--linea); color: var(--tinta-2); }
+.en p { margin: 0 0 6px; }
+footer { max-width: 1120px; margin: 0 auto; padding: 0 16px 40px; font-size: 15px; color: var(--tinta-2); }
+@media (max-width: 860px) {
+  main { padding-top: 28px; }
+  .cabeza, .dos { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .cifras { grid-template-columns: minmax(0, 1fr); margin: 32px 0; }
+  .btn { flex: 1 1 100%; justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) { video { display: none; } .sin-movimiento { display: block !important; } }
+</style>
+</head>
+<body>
+<p class="banda">Proyecto de equipo de 5 personas · Hackathon TalentUO 2026 · <a href="https://github.com/TalentUO/TalentUO">Código original (licencia MIT)</a></p>
+<main>
+  <section class="cabeza">
+    <div>
+      <div class="semaforo" aria-hidden="true"><i style="background:var(--rojo)"></i><i style="background:var(--ambar-vivo)"></i><i style="background:var(--mapa-verde)"></i></div>
+      <h1>Avisar de los días de lleno en Asturias, zona a zona</h1>
+      <p class="entrada">Un modelo que prevé, para cada día y cada zona de Asturias, cuánta gente llegará de ocio comparado con un día normal, y una web que lo enseña como un semáforo.</p>
+      <div class="botones">
+        <a class="btn principal" href="demo/">Abrir la demo</a>
+        <a class="btn" href="https://github.com/TalentUO/TalentUO">Repo del equipo</a>
+        <a class="btn" href="https://github.com/adrian-fzl-data/ntt-tourism">Código de esta versión</a>
+      </div>
+    </div>
+    <figure>
+      <video src="medios/demo-bucle.mp4" poster="medios/demo-bucle.jpg" autoplay muted loop playsinline preload="metadata"
+        aria-label="La demo avanza del 11 al 15 de agosto de 2024 y el mapa pasa de verde a rojo en la costa y el oriente"></video>
+      <img class="sin-movimiento" src="medios/demo-bucle.jpg" alt="Mapa de la demo el 15 de agosto de 2024, con la costa y el oriente en rojo" style="display:none;width:100%;border-radius:16px">
+      <figcaption>Demo con datos reales de agosto de 2024: del día 11 al 15, el puente de la Asunción.</figcaption>
+    </figure>
+  </section>
+
+  <ul class="cifras">
+    <li><b>9,7&nbsp;%</b><span>de error medio en la previsión a 1–7 días, frente al 12,9&nbsp;% de suponer un día normal.</span></li>
+    <li><b>+227&nbsp;% / +290&nbsp;%</b><span>previsto 8 días antes y real en Cangas de Onís y los Lagos el 15 de agosto de 2024.</span></li>
+    <li><b>46 zonas</b><span>que cubren los 78 concejos de Asturias, con un semáforo cada día.</span></li>
+  </ul>
+
+  <section class="dos">
+    <div>
+      <h2>Mi papel</h2>
+      <p>Somos un equipo de 5. Me encargué de los datos de demanda y movilidad (MITMA, INE y SADEI), apoyé el diseño de la web y la explicación de los datos, y preparé el repositorio para hacerlo público: licencias de los datos de terceros, integración continua y documentación. Cocreé el repositorio del equipo.</p>
+    </div>
+    <div>
+      <h2>Lo que todavía no hace</h2>
+      <p>Aún se le escapan bastantes días de saturación. Y los datos de movilidad no se publican en tiempo real, así que la demo enseña agosto de 2024 y compara lo previsto con lo que pasó de verdad.</p>
+    </div>
+  </section>
+
+  <section class="en" lang="en">
+    <p><b>In English.</b> NTT Tourism forecasts, day by day and zone by zone, how many leisure visitors will reach Asturias compared with a normal day, and shows it as a traffic light.</p>
+    <p>A team project of five people built at the TalentUO 2026 Hackathon (University of Oviedo). I worked on the demand and mobility data (MITMA, INE, SADEI).</p>
+    <p>The demo replays August 2024 with real data: 9.7&nbsp;% mean error at 1–7 days, against 12.9&nbsp;% for assuming a normal day.</p>
+  </section>
+</main>
+<footer>Adrián Fernández López · <a href="https://github.com/adrian-fzl-data">github.com/adrian-fzl-data</a> · «NTT Tourism» es el nombre del proyecto del equipo, no un producto de NTT DATA.</footer>
+</body>
+</html>
