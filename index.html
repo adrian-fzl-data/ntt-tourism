@@ -58,6 +58,7 @@ figcaption { font-size: 15px; color: var(--tinta-2); margin-top: 8px; }
 .dos { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; }
 h2 { font: 700 24px/1.2 var(--f-titulo); margin: 0 0 10px; }
 .dos p { margin: 0 0 12px; }
+.h2-sig { margin-top: 28px; }
 .en { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--linea); color: var(--tinta-2); }
 .en p { margin: 0 0 6px; }
 footer { max-width: 1120px; margin: 0 auto; padding: 0 16px 40px; font-size: 15px; color: var(--tinta-2); }
@@ -101,17 +102,19 @@ footer { max-width: 1120px; margin: 0 auto; padding: 0 16px 40px; font-size: 15p
   <section class="dos">
     <div>
       <h2>Mi papel</h2>
-      <p>Somos un equipo de 5. Me encargué de los datos de demanda y movilidad (MITMA, INE y SADEI), apoyé el diseño de la web y la explicación de los datos, y preparé el repositorio para hacerlo público: licencias de los datos de terceros, integración continua y documentación. Cocreé el repositorio del equipo.</p>
+      <p>Somos un equipo de 5. Con otro compañero llevé la parte de datos: las fuentes de demanda y movilidad (MITMA, INE y SADEI) y su limpieza y preparación para entrenar el modelo. La web interactiva la construyeron los otros tres; yo apoyé su diseño y la explicación de los datos. También preparé el repositorio para hacerlo público (licencias de datos de terceros, integración continua y documentación). Cocreé el repositorio y soy propietario de la organización del equipo en GitHub.</p>
+      <h2 class="h2-sig">Después del hackathon</h2>
+      <p>Esta copia es una versión de escaparate que preparé por mi cuenta sobre el código del equipo: la demo congelada en agosto de 2024, el mapa a pantalla completa, los filtros de costa y montaña por concejo, el Top 3 de más y menos gente, más legibilidad en móvil y esta página.</p>
     </div>
     <div>
       <h2>Lo que todavía no hace</h2>
-      <p>Aún se le escapan bastantes días de saturación. Y los datos de movilidad no se publican en tiempo real, así que la demo enseña agosto de 2024 y compara lo previsto con lo que pasó de verdad.</p>
+      <p>Se le escapan días de saturación: a 1–7 días avisa del 55&nbsp;% de ellos (y cuando avisa, acierta el 89&nbsp;% de las veces). Y los datos de movilidad no se publican en tiempo real, así que la demo enseña agosto de 2024 y compara lo previsto con lo que pasó de verdad.</p>
     </div>
   </section>
 
   <section class="en" lang="en">
     <p><b>In English.</b> NTT Tourism forecasts, day by day and zone by zone, how many leisure visitors will reach Asturias compared with a normal day, and shows it as a traffic light.</p>
-    <p>A team project of five people built at the TalentUO 2026 Hackathon (University of Oviedo). I worked on the demand and mobility data (MITMA, INE, SADEI).</p>
+    <p>A team project of five people built at the TalentUO 2026 Hackathon (University of Oviedo). With a teammate I worked on the data side: demand and mobility sources (MITMA, INE, SADEI), cleaned and prepared for training. This showcase copy, frozen on August 2024, is my own later work on top of the team's code.</p>
     <p>The demo replays August 2024 with real data: 9.7&nbsp;% mean error at 1–7 days, against 12.9&nbsp;% for assuming a normal day.</p>
   </section>
 </main>

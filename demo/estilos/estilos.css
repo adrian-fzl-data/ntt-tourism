@@ -1007,3 +1007,19 @@ dialog::backdrop { background: var(--velo); }
 }
 .banda-equipo a { display: inline-block; padding-block: .35rem; }
 .nombre-geo span { font-size: .85rem; }
+/* Portátiles con poca altura (1366×657, 1280×620…): que el Top 3 se vea sin desplazar.
+   Se quita la segunda frase (el distintivo «Ejemplo real: agosto de 2024» sigue a la vista)
+   y la línea de visitantes del Top 3, que también está en la ficha. */
+@media (min-width: 1061px) and (max-height: 800px) {
+  .flota-info .subtitulo-2 { display: none; }
+  .flota-info .subtitulo-pagina { margin-bottom: .2rem; }
+  .flota-info .fecha-grande { font-size: 1.25rem; }
+  .flota-info .fecha-mandos { margin-top: .35rem; }
+  #ranking .rk-visit { display: none; }
+  #ranking .rk { min-height: 44px; padding-block: .25rem; }
+  #ranking .rk-pct { font-size: 1.15rem; }
+  #ranking .rk-dato { flex-direction: row; align-items: center; gap: .5rem; }
+  #ranking .lat-sub { display: none; }
+  .flota-info .fecha-estado > * { font-size: .8rem; }
+  .flota-info .accesos { display: none; }
+}

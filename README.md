@@ -26,11 +26,15 @@ Validación fuera de muestra, por bloques de tiempo que el modelo no vio al entr
 
 ## Mi papel
 
-Somos un equipo de 5. Me encargué de los datos de demanda y movilidad (MITMA, INE y SADEI), apoyé el diseño de la web y la explicación de los datos, y preparé el repositorio para hacerlo público: licencias de los datos de terceros, integración continua y documentación. Cocreé el repositorio del equipo.
+Somos un equipo de 5. Con otro compañero llevé la parte de datos: las fuentes de demanda y movilidad (MITMA, INE y SADEI) y su limpieza y preparación para entrenar el modelo. La web interactiva la construyeron los otros tres; yo apoyé su diseño y la explicación de los datos. También preparé el repositorio para hacerlo público (licencias de datos de terceros, integración continua y documentación). Cocreé el repositorio y soy propietario de la organización del equipo en GitHub.
+
+## Después del hackathon
+
+Este repositorio es una versión de escaparate que preparé por mi cuenta sobre el código del equipo: la demo congelada en agosto de 2024, el mapa a pantalla completa con mar y provincias vecinas, los filtros de costa y montaña por concejo, el Top 3 de más y menos gente, más legibilidad en móvil, esta página de entrada y los scripts del vídeo. El modelo y sus previsiones son los del equipo, sin cambios.
 
 ## Lo que todavía no hace
 
-Aún se le escapan bastantes días de saturación. Y los datos de movilidad no se publican en tiempo real, así que la demo enseña agosto de 2024.
+Se le escapan días de saturación: a 1–7 días avisa del 55 % de ellos (y cuando avisa, acierta el 89 % de las veces). Y los datos de movilidad no se publican en tiempo real, así que la demo enseña agosto de 2024.
 
 ## Abrirla en local
 
@@ -47,4 +51,4 @@ Código del equipo NTT Tourism (Hackathon TalentUO 2026), con licencia MIT: ver 
 
 ---
 
-*In English:* NTT Tourism forecasts, day by day and zone by zone, how many leisure visitors will reach Asturias compared with a normal day, and shows it as a traffic light. A team project of five people built at the TalentUO 2026 Hackathon (University of Oviedo); I worked on the demand and mobility data (MITMA, INE, SADEI). The demo replays August 2024 with real data: 9.7 % mean error at 1–7 days, against 12.9 % for assuming a normal day.
+*In English:* NTT Tourism forecasts, day by day and zone by zone, how many leisure visitors will reach Asturias compared with a normal day, and shows it as a traffic light. A team project of five people built at the TalentUO 2026 Hackathon (University of Oviedo); with a teammate I worked on the data side (MITMA, INE, SADEI: sourcing, cleaning and preparing it for training). This showcase copy is my own later work on top of the team's code. The demo replays August 2024 with real data: 9.7 % mean error at 1–7 days, against 12.9 % for assuming a normal day.
